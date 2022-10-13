@@ -54,8 +54,7 @@ def linear_regression_exact(filename):
     with open(filename, 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
-    ones = np.ones((100, 1))
-    x_with_ones = np.hstack([ones, x])
+    x_with_ones = np.hstack([np.ones((100, 1)), x])
     trans_x = x_with_ones.transpose()
     xt_x_minus_one = np.linalg.pinv(trans_x.dot(x_with_ones))
     theta = xt_x_minus_one.dot(trans_x).dot(y)
