@@ -11,14 +11,14 @@ from time import time
 # y = a*x + b + a * noise
 # in range -1 .. 1
 # with random noise of given amplitude (noise)
-# vizualizes it and unloads to csv
+# visualizes it and unloads to csv
 def generate_linear(a, b, noise, filename, size=100):
     print('Generating random data y = a*x + b')
     x = 2 * np.random.rand(size, 1) - 1
     y = a * x + b + noise * a * (np.random.rand(size, 1) - 0.5)
     data = np.hstack((x, y))
     np.savetxt(filename, data, delimiter=',')
-    return (x, y)
+    return x, y
 
 
 # thats an example of linear regression using polyfit
@@ -46,7 +46,7 @@ def linear_regression_numpy(filename):
     plt.plot(x, h, "r", label='model')
     plt.legend()
     plt.show()
-    return (model)
+    return model
 
 
 def linear_regression_exact(filename):
@@ -54,8 +54,13 @@ def linear_regression_exact(filename):
     with open(filename, 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
+    ones = np.ones((100, 1))
+    x_with_ones = np.hstack([ones, x])
+    trans_x = x_with_ones.transpose()
+    xt_x_minus_one = np.linalg.pinv(trans_x.dot(x_with_ones))
+    theta = xt_x_minus_one.dot(trans_x).dot(y)
 
-    return
+    return None
 
 
 def check(model, ground_truth):
@@ -77,7 +82,7 @@ def check(model, ground_truth):
 # y = a_n*X^n + ... + a2*x^2 + a1*x + a0 + noise
 # in range -1 .. 1
 # with random noise of given amplitude (noise)
-# vizualizes it and unloads to csv
+# visualize it and unloads to csv
 def generate_poly(a, n, noise, filename, size=100):
     x = 2 * np.random.rand(size, 1) - 1
     y = np.zeros((size, 1))
@@ -98,29 +103,28 @@ def polynomial_regression_numpy(filename):
         data = np.loadtxt(f, delimiter=',')
     # split to initial arrays
     x, y = np.hsplit(data, 2)
-    x = np.sort(x, axis=0)
-    y = np.sort(y, axis=0)
     # printing shapes is useful for debugging
     print(np.shape(x))
     print(np.shape(y))
     # our model
     time_start = time()
     model = np.polyfit(np.transpose(x)[0], np.transpose(y)[0], 2)
-    print(model)
     time_end = time()
     print(f"polyfit in {time_end - time_start} seconds")
     # our hypothesis for give x
     print(model)
-    h = model[0] * np.power(x, 2) + model[1] * x + model[2]
     # and check if it's ok
     plt.title("Polynomial regression task")
     plt.xlabel("X")
     plt.ylabel("Y")
     plt.plot(x, y, "b.", label='experiment')
+    x = np.sort(x, axis=0)
+    h = model[0] * np.power(x, 2) + model[1] * x + model[2]
     plt.plot(x, h, "r", label='model')
     plt.legend()
     plt.show()
     return (model)
+
 
 # Ex.2 gradient descent for linear regression without regularization
 
@@ -178,10 +182,10 @@ def minimize(theta, x, y, L):
 if __name__ == "__main__":
     generate_linear(1, -3, 1, 'linear.csv', 100)
     model = linear_regression_numpy("linear.csv")
-    #print(f"Is model correct?\n{check(model, np.array([1, -3]))}")
+    # print(f"Is model correct?\n{check(model, np.array([1, -3]))}")
     # ex1 . - exact solution
-    #model_exact = linear_regression_exact("linear.csv")
-    #check(model_exact, np.array([-3,1]))
+    model_exact = linear_regression_exact("linear.csv")
+    #check(model_exact, np.array([-3, 1]))
 
     # ex1. polynomial with numpy
     generate_poly([1, 2, 3], 2, 0.5, 'polynomial.csv')
