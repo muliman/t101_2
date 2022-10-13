@@ -38,7 +38,6 @@ def linear_regression_numpy(filename):
     print(f"polyfit in {time_end - time_start} seconds")
     # our hypothesis for give x
     h = model[0] * x + model[1]
-
     # and check if it's ok
     plt.title("Linear regression task")
     plt.xlabel("X")
@@ -51,7 +50,11 @@ def linear_regression_numpy(filename):
 
 
 def linear_regression_exact(filename):
-    print("Ex1: your code here - exact solution usin invert matrix")
+    print("Ex1: your code here - exact solution using invert matrix")
+    with open(filename, 'r') as f:
+        data = np.loadtxt(f, delimiter=',')
+    x, y = np.hsplit(data, 2)
+
     return
 
 
@@ -85,7 +88,6 @@ def generate_poly(a, n, noise, filename, size=100):
         return
     for i in range(0, n + 1):
         y = y + a[i] * np.power(x, i) + noise * (np.random.rand(size, 1) - 0.5)
-    print(np.shape(x))
     data = np.hstack((x, y))
     np.savetxt(filename, data, delimiter=',')
 
@@ -96,7 +98,8 @@ def polynomial_regression_numpy(filename):
         data = np.loadtxt(f, delimiter=',')
     # split to initial arrays
     x, y = np.hsplit(data, 2)
-    # сортировка x и y
+    x = np.sort(x, axis=0)
+    y = np.sort(y, axis=0)
     # printing shapes is useful for debugging
     print(np.shape(x))
     print(np.shape(y))
@@ -107,6 +110,7 @@ def polynomial_regression_numpy(filename):
     time_end = time()
     print(f"polyfit in {time_end - time_start} seconds")
     # our hypothesis for give x
+    print(model)
     h = model[0] * np.power(x, 2) + model[1] * x + model[2]
     # and check if it's ok
     plt.title("Polynomial regression task")
