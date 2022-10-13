@@ -59,8 +59,15 @@ def linear_regression_exact(filename):
     trans_x = x_with_ones.transpose()
     xt_x_minus_one = np.linalg.pinv(trans_x.dot(x_with_ones))
     theta = xt_x_minus_one.dot(trans_x).dot(y)
-
-    return None
+    h = theta[1] * x + theta[0]
+    plt.title("Linear regression task exact")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.plot(x, y, "b.", label='experiment')
+    plt.plot(x, h, "r", label='model')
+    plt.legend()
+    plt.show()
+    return theta
 
 
 def check(model, ground_truth):
