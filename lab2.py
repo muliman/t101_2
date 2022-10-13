@@ -1,10 +1,9 @@
 """
     Module lab2 - Linear regression, gradient descent, polynomial regression
 """
-
+from time import time
 import numpy as np
 import matplotlib.pyplot as plt
-from time import time
 
 
 # generates x and y numpy arrays for
@@ -66,7 +65,8 @@ def linear_regression_exact(filename):
     plt.plot(x, h, "r", label='model')
     plt.legend()
     plt.show()
-    return theta
+    theta_trans = theta.transpose()  # transpose theta to match dimension
+    return theta_trans[0]
 
 
 def check(model, ground_truth):
@@ -77,8 +77,10 @@ def check(model, ground_truth):
         r = np.dot(model - ground_truth, model - ground_truth) / (np.dot(ground_truth, ground_truth))
         print(r)
         if r < 0.0001:
+            print(True)
             return True
         else:
+            print(False)
             return False
 
 
@@ -109,9 +111,6 @@ def polynomial_regression_numpy(filename):
         data = np.loadtxt(f, delimiter=',')
     # split to initial arrays
     x, y = np.hsplit(data, 2)
-    # printing shapes is useful for debugging
-    print(np.shape(x))
-    print(np.shape(y))
     # our model
     time_start = time()
     model = np.polyfit(np.transpose(x)[0], np.transpose(y)[0], 2)
@@ -129,7 +128,7 @@ def polynomial_regression_numpy(filename):
     plt.plot(x, h, "r", label='model')
     plt.legend()
     plt.show()
-    return (model)
+    return model
 
 
 # Ex.2 gradient descent for linear regression without regularization
@@ -145,7 +144,7 @@ def polynomial_regression_numpy(filename):
 def gradient_descent_step(dJ, theta, alpha):
     print("your code goes here")
 
-    return (theta)
+    return theta
 
 
 # get gradient over all xy dataset - gradient descent
@@ -191,7 +190,7 @@ if __name__ == "__main__":
     # print(f"Is model correct?\n{check(model, np.array([1, -3]))}")
     # ex1 . - exact solution
     model_exact = linear_regression_exact("linear.csv")
-    #check(model_exact, np.array([-3, 1]))
+    check(model_exact, np.array([-3, 1]))
 
     # ex1. polynomial with numpy
     generate_poly([1, 2, 3], 2, 0.5, 'polynomial.csv')
