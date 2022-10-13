@@ -106,7 +106,6 @@ def generate_poly(a, n, noise, filename, size=100):
 
 
 def polynomial_regression_numpy(filename):
-    print("Ex1: your code here")
     with open(filename, 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     # split to initial arrays
@@ -137,7 +136,8 @@ def polynomial_regression_numpy(filename):
 # alpha - speed of descend
 # theta - vector of arguments, we're looking for the optimal ones (shape is 1 х N)
 # J(theta) function which is being minimizing over theta (shape is 1 x 1 - scalar)
-# dJ(theta) - gradient, i.e. partial derivatives of J over theta - dJ/dtheta_i (shape is 1 x N - the same as theta)
+# dJ(theta) - gradient, i.e. partial derivatives of J over theta - dJ/dtheta_i
+# (shape is 1 x N - the same as theta)
 # x and y are both vectors
 
 
@@ -206,7 +206,8 @@ if __name__ == "__main__":
     # 0. generate date with function generate_poly for degree=3, use size = 10, 20, 30, ... 100
     # for each size:
     # 1. shuffle data into train - test - valid
-    # Now we're going to try different degrees of model to aproximate our data, set degree=1 (linear regression)
+    # Now we're going to try different degrees of model to aproximate our data,
+    # set degree=1 (linear regression)
     # 2. call minimize(...) and plot J(i)
     # 3. call check(theta1, theta2) to check results for optimal theta
     # 4. plot min(J_train), min(J_test) vs size: is it overfit or underfit?
