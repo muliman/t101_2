@@ -144,23 +144,24 @@ def polynomial_regression_numpy(filename):
 def gradient_descent_step(dJ, theta, alpha):
     print("your code goes here")
     for i in range(len(theta)):
-        theta[i] = theta[i] - alpha * dJ
+        theta[i] = theta[i] - alpha * dJ[i]
     return theta
 
 
 # get gradient over all xy dataset - gradient descent
 def get_dJ(x, y, theta):
-    theta_new = theta
-    # α 1
-    # m Σm
-    # i=1(hθ(xi) − yi)xi
-    # j
     h = [0] * len(theta)
+    dj = list()
+    temp = 0
+    m = len(x)
     for i in range(len(theta)):
-        for j in range(len(x)):
+        for j in range(m):
             h[i] += theta[i] * np.power(x[j], i)
-    print(h)
-    return theta_new
+    for i in range(len(theta)):
+        for k in range(m):
+            temp += 1 / m * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
+        dj.append(temp)
+    return dj
 
 
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
