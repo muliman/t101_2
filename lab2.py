@@ -142,9 +142,11 @@ def polynomial_regression_numpy(filename):
 
 
 def gradient_descent_step(dJ, theta, alpha):
-    print("your code goes here")
-    for i in range(len(theta)):
-        theta[i] = theta[i] - alpha * dJ[i]
+    k = 1
+    while theta[k] - theta[k - 1] > alpha or theta[k] - theta[k - 1] < -alpha:
+        for i in range(len(theta)):
+            theta[i] = theta[i] - alpha * dJ[i]
+        k += 1
     return theta
 
 
@@ -156,8 +158,8 @@ def get_dJ(x, y, theta):
     m = len(x)
     for i in range(len(theta)):
         for j in range(m):
-            h[i] += theta[i] * np.power(x[j], i)
-    for i in range(len(theta)):
+            h[i] += theta[i] * np.power(x[j], i)  # calculate hypothesis
+    for i in range(len(theta)):  # calculate all partial derivatives of J
         for k in range(m):
             temp += 1 / m * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
         dj.append(temp)
