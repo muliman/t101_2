@@ -162,36 +162,38 @@ def get_dJ(x, y, theta, alpha):
 
 
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
-def get_dJ_minibatch(x, y, theta, M):
-    h = [0] * len(theta)
-    dj = list()
-    temp = 0
-    m = len(x)
-    delta = M
-    for i in range(len(theta)):
-        for j in range(m):
-            h[i] += theta[i] * np.power(x[j], i)  # calculate hypothesis
+def get_dJ_minibatch(x, y, theta, M, alpha):
+    new_theta = np.ndarray
+    new_theta.reshape(np.shape(theta))
+    theta_trans = theta.transpose()
+    h = np.dot(theta_trans, x)  # calculate hypothesis
+    delta = 0
+    dj = [0] * len(theta)
     while M + delta < len(x):
-        for i in range(len(theta)):
-            for k in range(delta):
-                temp += 1 / m * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
-            dj.append(temp)
-        delta = M + delta
-    return dj
+        for i in range(len(theta)):  # calculate partial derivatives of J
+            for k in range(len(x)):
+                dj[i] += 1 / len(x) * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
+            new_theta.itemset(i, gradient_descent_step(dj[i], theta[i], alpha))
+            delta = M + delta
+    return new_theta
 
 
 # get gradient over all minibatch of single sample from xy dataset - stochastic gradient descent
-def get_dJ_sgd(x, y, theta):
+def get_dJ_sgd(x, y, theta, alpha):
     temp_x = x
     temp_y = y
-    dj = list()
-    while len(temp_x) > 0:
-        chosen_element = random.randint(0, len(temp_x))
-        result = get_dJ_minibatch(temp_x[chosen_element], temp_y[chosen_element], theta, 1)
-        dj.append(result)
-        temp_x.pop(chosen_element)
-        temp_y.pop(chosen_element)
-    return dj
+    new_theta = np.ndarray
+    new_theta.reshape(np.shape(theta))
+    theta_trans = theta.transpose()
+    h = np.dot(theta_trans, x)  # calculate hypothesis
+    dj = [0] * len(theta)
+    for i in range(len(theta)):  # calculate partial derivatives of J
+        for k in range(len(x)):
+            dj[i] += 1 / len(x) * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
+    for i in range(len(x)):
+        index = random.randint(0, len(x))
+        new_theta.itemset(i, gradient_descent_step(dj[index], theta[index], alpha))
+    return new_theta
 
 
 # try each of gradient decsent (complete, minibatch, sgd) for varius alphas
