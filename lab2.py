@@ -77,7 +77,7 @@ def check(model, ground_truth):
     else:
         r = np.dot(model - ground_truth, model - ground_truth) / (np.dot(ground_truth, ground_truth))
         print(r)
-        if r < 0.0001:
+        if r < 0.0005:
             print(True)
             return True
         else:
@@ -149,9 +149,10 @@ def gradient_descent_step(dJ, theta, alpha):
 
 # get gradient over all xy dataset - gradient descent
 def get_dJ(x, y, theta):
-    theta_trans = theta.transpose()
-    h = np.dot(theta_trans, x)  # calculate hypothesis
-    dj = 1/len(x) * ((h - y.transpose()).transpose()).dot(x)
+    theta = theta.transpose()
+    x = np.hstack([np.ones((100, 1)), x])
+    h = np.dot(theta.transpose(), x.transpose())  # calculate hypothesis
+    dj = 1/len(x) * (h - y).dot(x)
     return dj
 
 
@@ -195,11 +196,13 @@ def get_dJ_sgd(x, y, theta, alpha):
 # plot results as J(i)
 def minimize(theta, x, y, L):
     # n - number of samples in learning subset, m - ...
-    n = 10000
-    theta = np.zeros(n)  # you can try random initialization
+    n = 100
+
     for i in range(0, L):
         dJ = get_dJ(x, y, theta)  # here you should try different gradient descents
-        gradient_descent_step(dJ, theta, 0.001)
+        print(dJ)
+        theta = gradient_descent_step(dJ, theta, 0.001)
+
     # and plot J(i)
     return
 
@@ -207,19 +210,24 @@ def minimize(theta, x, y, L):
 if __name__ == "__main__":
     generate_linear(1, -3, 1, 'linear.csv', 100)
     model = linear_regression_numpy("linear.csv")
-    # print(f"Is model correct?\n{check(model, np.array([1, -3]))}")
+    print(f"Is model correct?\n{check(model, np.array([1, -3]))}")
+
     # ex1 . - exact solution
     model_exact = linear_regression_exact("linear.csv")
     check(model_exact, np.array([-3, 1]))
+    model_exact = np.array([model_exact])
+    print('model  ', model_exact)
 
     # ex1. polynomial with numpy
     generate_poly([1, 2, 3], 2, 0.5, 'polynomial.csv')
     polynomial_regression_numpy("polynomial.csv")
 
-    # ex2. find minimum with gradient descent
-    # 0. generate date with function above
-    # 1. shuffle data into train - test - valid
-    # 2. call minuimize(...) and plot J(i)
+    with open('linear.csv', 'r') as f:
+        data = np.loadtxt(f, delimiter=',')
+    # split to initial arrays
+    x, y = np.hsplit(data, 2)
+    minimize(model_exact, x, y, 100)
+
     # 3. call check(theta1, theta2) to check results for optimal theta
 
     # ex3. polinomial regression
