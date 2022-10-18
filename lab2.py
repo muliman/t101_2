@@ -148,21 +148,15 @@ def gradient_descent_step(dJ, theta, alpha):
 
 
 # get gradient over all xy dataset - gradient descent
-def get_dJ(x, y, theta, alpha):
-    new_theta = np.ndarray
-    new_theta.reshape(np.shape(theta))
-    dj = [0] * len(theta)
+def get_dJ(x, y, theta):
     theta_trans = theta.transpose()
     h = np.dot(theta_trans, x)  # calculate hypothesis
-    for i in range(len(theta)):  # calculate partial derivatives of J
-        for k in range(len(x)):
-            dj[i] += 1 / len(x) * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
-        new_theta.itemset(gradient_descent_step(dj[i], theta[i], alpha))
-    return new_theta
+    dj = 1/len(x) * ((h - y.transpose()).transpose()).dot(x)
+    return dj
 
 
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
-def get_dJ_minibatch(x, y, theta, M, alpha):
+def get_dJ_minibatch(x, y, theta, M):
     new_theta = np.ndarray
     new_theta.reshape(np.shape(theta))
     theta_trans = theta.transpose()
@@ -173,7 +167,7 @@ def get_dJ_minibatch(x, y, theta, M, alpha):
         for i in range(len(theta)):  # calculate partial derivatives of J
             for k in range(len(x)):
                 dj[i] += 1 / len(x) * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
-            new_theta.itemset(i, gradient_descent_step(dj[i], theta[i], alpha))
+            #new_theta.itemset(i, gradient_descent_step(dj[i], theta[i], alpha))
             delta = M + delta
     return new_theta
 
@@ -201,14 +195,12 @@ def get_dJ_sgd(x, y, theta, alpha):
 # plot results as J(i)
 def minimize(theta, x, y, L):
     # n - number of samples in learning subset, m - ...
-    n = 12345  # <-- calculate it properly!
+    n = 10000
     theta = np.zeros(n)  # you can try random initialization
-    dJ = np.zeros(n)
     for i in range(0, L):
-        theta = get_dJ(x, y, theta)  # here you should try different gradient descents
-        J = 0  # here you should calculate it properly
+        dJ = get_dJ(x, y, theta)  # here you should try different gradient descents
+        gradient_descent_step(dJ, theta, 0.001)
     # and plot J(i)
-    print("your code goes here")
     return
 
 
