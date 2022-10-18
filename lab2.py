@@ -109,7 +109,6 @@ def generate_poly(a, n, noise, filename, size=100):
 def polynomial_regression_numpy(filename):
     with open(filename, 'r') as f:
         data = np.loadtxt(f, delimiter=',')
-    # split to initial arrays
     x, y = np.hsplit(data, 2)
     # our model
     time_start = time()
@@ -224,9 +223,8 @@ if __name__ == "__main__":
 
     with open('linear.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
-    # split to initial arrays
     x, y = np.hsplit(data, 2)
-    minimize(model_exact, x, y, 100)
+    minimize(model, x, y, 100)
 
     # 3. call check(theta1, theta2) to check results for optimal theta
 
