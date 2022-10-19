@@ -148,10 +148,8 @@ def gradient_descent_step(dJ, theta, alpha):
 
 # get gradient over all xy dataset - gradient descent
 def get_dJ(x, y, theta):
-    theta = theta.transpose()
-    x = np.hstack([np.ones((100, 1)), x])
-    h = np.dot(theta.transpose(), x.transpose())  # calculate hypothesis
-    dj = 1/len(x) * (h - y).dot(x)
+    h = np.dot(theta, x.transpose())  # calculate hypothesis
+    dj = 1/len(x) * (h - y.transpose()).dot(x)
     return dj
 
 
@@ -196,13 +194,19 @@ def get_dJ_sgd(x, y, theta, alpha):
 def minimize(theta, x, y, L):
     # n - number of samples in learning subset, m - ...
     n = 100
-
+    alpha = 0.2
+    j = 0
+    random.shuffle(x)
     for i in range(0, L):
-        dJ = get_dJ(x, y, theta)  # here you should try different gradient descents
-        print(dJ)
-        theta = gradient_descent_step(dJ, theta, 0.001)
-
-    # and plot J(i)
+        dj = get_dJ(x, y, theta)  # here you should try different gradient descents
+        theta = gradient_descent_step(dj, theta, alpha)
+        h = np.dot(theta, x.transpose())
+        j = 0.5 * len(x) * np.square(h - y.transpose()).sum(axis=1)
+        plt.title("Minimization J")
+        plt.xlabel("i")
+        plt.ylabel("J")
+        plt.plot(i, j, "b.")
+    plt.show()
     return
 
 
@@ -214,17 +218,19 @@ if __name__ == "__main__":
     # ex1 . - exact solution
     model_exact = linear_regression_exact("linear.csv")
     check(model_exact, np.array([-3, 1]))
-    model_exact = np.array([model_exact])
-    print('model  ', model_exact)
 
     # ex1. polynomial with numpy
     generate_poly([1, 2, 3], 2, 0.5, 'polynomial.csv')
     polynomial_regression_numpy("polynomial.csv")
 
+    first = random.randint(1, 10)
+    second = random.randint(1, 10)
+    theta = np.array([first, second]).reshape((1, 2))
     with open('linear.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
-    minimize(model, x, y, 100)
+    x = np.hstack([np.ones((100, 1)), x])
+    minimize(theta, x, y, 60)
 
     # 3. call check(theta1, theta2) to check results for optimal theta
 
