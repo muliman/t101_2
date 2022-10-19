@@ -195,7 +195,6 @@ def minimize(theta, x, y, L):
     # n - number of samples in learning subset, m - ...
     n = 100
     alpha = 0.2
-    j = 0
     random.shuffle(x)
     for i in range(0, L):
         dj = get_dJ(x, y, theta)  # here you should try different gradient descents
@@ -223,8 +222,8 @@ if __name__ == "__main__":
     generate_poly([1, 2, 3], 2, 0.5, 'polynomial.csv')
     polynomial_regression_numpy("polynomial.csv")
 
-    first = random.randint(1, 10)
-    second = random.randint(1, 10)
+    first = random.randint(1, 100)
+    second = random.randint(1, 100)
     theta = np.array([first, second]).reshape((1, 2))
     with open('linear.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
