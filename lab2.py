@@ -188,6 +188,25 @@ def get_dJ_sgd(x, y, theta, alpha):
     return new_theta
 
 
+def divide_x(x):
+    random.shuffle(x)
+    size_educational = 0.6 * len(x)
+    size_test = 0.2 * len(x)  # also size of validate sample = size of test sample
+    x_edu = list()
+    x_t = list()
+    x_v = list()
+    for i in range(int(size_educational)):
+        x_edu.append(x[i][0])
+    for i in range(int(size_educational), int(size_educational) + int(size_test)):
+        x_t.append(x[i][0])
+    for i in range(int(size_educational) + int(size_test), int(len(x))):
+        x_v.append(x[i][0])
+    x_educational = np.array(x_edu).reshape(size_educational, 1)
+    x_test = np.array(x_t).reshape(size_test, 1)
+    x_validate = np.array(x_v).reshape(size_test, 1)
+    return x_educational, x_validate, x_test
+
+
 # try each of gradient decsent (complete, minibatch, sgd) for varius alphas
 # L - number of iterations
 # plot results as J(i)
@@ -195,7 +214,6 @@ def minimize(theta, x, y, L):
     # n - number of samples in learning subset, m - ...
     n = 100
     alpha = 0.2
-    random.shuffle(x)
     for i in range(0, L):
         dj = get_dJ(x, y, theta)  # here you should try different gradient descents
         theta = gradient_descent_step(dj, theta, alpha)
@@ -229,7 +247,7 @@ if __name__ == "__main__":
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
     x = np.hstack([np.ones((100, 1)), x])
-    minimize(theta, x, y, 60)
+    minimize(theta, x, y, 100)
 
     # 3. call check(theta1, theta2) to check results for optimal theta
 
