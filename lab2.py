@@ -224,7 +224,7 @@ def minimize(theta, x, y, L):
         plt.ylabel("J")
         plt.plot(i, j, "b.")
     plt.show()
-    return
+    return theta
 
 
 if __name__ == "__main__":
