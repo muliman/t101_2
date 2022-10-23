@@ -210,15 +210,16 @@ def divide_x(x):
 # try each of gradient decsent (complete, minibatch, sgd) for varius alphas
 # L - number of iterations
 # plot results as J(i)
-def minimize(theta, x, y, L):
+def minimize(theta,x, y, L):
     # n - number of samples in learning subset, m - ...
     n = 100
-    alpha = 0.2
-    for i in range(0, L):
+    alpha = 0.15
+    for i in range(L):
         dj = get_dJ(x, y, theta)  # here you should try different gradient descents
         theta = gradient_descent_step(dj, theta, alpha)
         h = np.dot(theta, x.transpose())
-        j = 0.5 * len(x) * np.square(h - y.transpose()).sum(axis=1)
+        j = 0.5 / len(x) * np.square(h - y.transpose()).sum(axis=1)
+        alpha -= 0.0002
         plt.title("Minimization J")
         plt.xlabel("i")
         plt.ylabel("J")
@@ -240,15 +241,17 @@ if __name__ == "__main__":
     generate_poly([1, 2, 3], 2, 0.5, 'polynomial.csv')
     polynomial_regression_numpy("polynomial.csv")
 
-    first = random.randint(1, 100)
-    second = random.randint(1, 100)
+    first = random.random()
+    second = random.random()
     theta = np.array([first, second]).reshape((1, 2))
+
     with open('linear.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
     x = np.hstack([np.ones((100, 1)), x])
-    minimize(theta, x, y, 60)
 
+    theta_grad = minimize(theta, x, y, 100)
+    check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
 
     # ex3. polinomial regression
