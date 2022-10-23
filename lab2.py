@@ -213,7 +213,7 @@ def divide_x(x):
 def minimize(theta,x, y, L):
     # n - number of samples in learning subset, m - ...
     n = 100
-    alpha = 0.15
+    alpha = 0.1
     for i in range(L):
         dj = get_dJ(x, y, theta)  # here you should try different gradient descents
         theta = gradient_descent_step(dj, theta, alpha)
