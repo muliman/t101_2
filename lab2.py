@@ -155,17 +155,14 @@ def get_dJ(x, y, theta):
 
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
 def minimize_minibatch(x, y, theta, l, m):
-    alpha = 0.1
+    alpha = 0.01
     offset = 0
     for i in range(l):
         if offset + m <= len(x):
-            x_split_l = x[offset:offset + m:m, 0]
-            x_split_r = x[offset:offset + m:m, 1]
-            split_x = np.hstack([x_split_l, x_split_r]).reshape(1,2)
-            split_y = y[offset:offset + m:m]
-            print(np.shape(split_x))
-            print(np.shape(split_y))
-            print(split_x, split_y)
+            x_split = np.reshape(x[offset:offset + m, 0], (m, 1))
+            print(np.shape(x_split))
+            split_x = np.hstack([np.ones((m, 1)), x_split]).reshape(m, 2)
+            split_y = y[offset:offset + m, 0]
             for k in range(offset, offset + m):
                 split_x.transpose()
                 split_y.transpose()
@@ -173,7 +170,7 @@ def minimize_minibatch(x, y, theta, l, m):
                 theta = gradient_descent_step(dj, theta, alpha)
                 h = np.dot(theta, split_x.transpose())
                 j = 0.5 / len(split_x) * np.square(h - split_y.transpose()).sum(axis=1)
-                alpha -= 0.0002
+                alpha += 0.0002
                 plt.title("Minimization J")
                 plt.xlabel("i")
                 plt.ylabel("J")
@@ -183,7 +180,6 @@ def minimize_minibatch(x, y, theta, l, m):
         with open('linear_for_minibatch.csv', 'r') as f:
             data = np.loadtxt(f, delimiter=',')
         x, y = np.hsplit(data, 2)
-        x = np.hstack([np.ones((800, 1)), x])
     plt.show()
     return theta
 
@@ -258,7 +254,7 @@ if __name__ == "__main__":
     with open('linear_for_minibatch.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
-    x = np.hstack([np.ones((800, 1)), x])
+    #x = np.hstack([np.ones((800, 1)), x])
     theta_grad = minimize_minibatch(x, y, theta, 100, 50)
     check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
