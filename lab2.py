@@ -13,7 +13,7 @@ import random
 # with random noise of given amplitude (noise)
 # visualizes it and unloads to csv
 def generate_linear(a, b, noise, filename, size=100):
-    print('Generating random data y = a*x + b')
+    #print('Generating random data y = a*x + b')
     x = 2 * np.random.rand(size, 1) - 1
     y = a * x + b + noise * a * (np.random.rand(size, 1) - 0.5)
     data = np.hstack((x, y))
@@ -155,12 +155,11 @@ def get_dJ(x, y, theta):
 
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
 def minimize_minibatch(x, y, theta, l, m):
-    alpha = 0.01
+    alpha = 0.15
     offset = 0
     for i in range(l):
         if offset + m <= len(x):
             x_split = np.reshape(x[offset:offset + m, 0], (m, 1))
-            print(np.shape(x_split))
             split_x = np.hstack([np.ones((m, 1)), x_split]).reshape(m, 2)
             split_y = y[offset:offset + m, 0]
             for k in range(offset, offset + m):
@@ -170,8 +169,8 @@ def minimize_minibatch(x, y, theta, l, m):
                 theta = gradient_descent_step(dj, theta, alpha)
                 h = np.dot(theta, split_x.transpose())
                 j = 0.5 / len(split_x) * np.square(h - split_y.transpose()).sum(axis=1)
-                alpha += 0.0002
-                plt.title("Minimization J")
+                alpha -= 0.0002
+                plt.title("Minimization J for minibatch")
                 plt.xlabel("i")
                 plt.ylabel("J")
                 plt.plot(i, j, "b.")
@@ -254,7 +253,6 @@ if __name__ == "__main__":
     with open('linear_for_minibatch.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
-    #x = np.hstack([np.ones((800, 1)), x])
     theta_grad = minimize_minibatch(x, y, theta, 100, 50)
     check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
