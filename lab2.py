@@ -154,20 +154,26 @@ def get_dJ(x, y, theta):
 
 
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
-def get_dJ_minibatch(x, y, theta, M):
-    new_theta = np.ndarray
-    new_theta.reshape(np.shape(theta))
-    theta_trans = theta.transpose()
-    h = np.dot(theta_trans, x)  # calculate hypothesis
-    delta = 0
-    dj = [0] * len(theta)
-    while M + delta < len(x):
-        for i in range(len(theta)):  # calculate partial derivatives of J
-            for k in range(len(x)):
-                dj[i] += 1 / len(x) * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
-            #new_theta.itemset(i, gradient_descent_step(dj[i], theta[i], alpha))
-            delta = M + delta
-    return new_theta
+def minimize_minibatch(x, y, theta, l, m):
+    alpha = 0.1
+    offset = 0
+    for i in range(l):
+        if offset + m <= len(x):
+            for k in range(offset, offset + m):
+                dj = get_dJ(x, y, theta)
+                theta = gradient_descent_step(dj, theta, alpha)
+                h = np.dot(theta, x.transpose())
+                j = 0.5 / len(x) * np.square(h - y.transpose()).sum(axis=1)
+                alpha -= 0.0002
+                plt.title("Minimization J")
+                plt.xlabel("i")
+                plt.ylabel("J")
+                plt.plot(i, j, "b.")
+            offset += m
+        generate_linear(1, -3, 1, 'linear_for_minibatch.csv', 1000)
+
+    plt.show()
+    return theta
 
 
 # get gradient over all minibatch of single sample from xy dataset - stochastic gradient descent
@@ -211,8 +217,6 @@ def divide_x(x):
 # L - number of iterations
 # plot results as J(i)
 def minimize(theta,x, y, L):
-    # n - number of samples in learning subset, m - ...
-    n = 100
     alpha = 0.1
     for i in range(L):
         dj = get_dJ(x, y, theta)  # here you should try different gradient descents
@@ -241,7 +245,7 @@ if __name__ == "__main__":
     generate_poly([1, 2, 3], 2, 0.5, 'polynomial.csv')
     polynomial_regression_numpy("polynomial.csv")
 
-    first = random.random()
+    first = random.random()  # generate theta for minimize
     second = random.random()
     theta = np.array([first, second]).reshape((1, 2))
 
