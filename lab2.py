@@ -149,7 +149,7 @@ def gradient_descent_step(dJ, theta, alpha):
 # get gradient over all xy dataset - gradient descent
 def get_dJ(x, y, theta):
     h = np.dot(theta, x.transpose())  # calculate hypothesis
-    dj = 1/len(x) * (h - y.transpose()).dot(x)
+    dj = 1 / len(x) * (h - y.transpose()).dot(x)
     return dj
 
 
@@ -159,19 +159,31 @@ def minimize_minibatch(x, y, theta, l, m):
     offset = 0
     for i in range(l):
         if offset + m <= len(x):
+            x_split_l = x[offset:offset + m:m, 0]
+            x_split_r = x[offset:offset + m:m, 1]
+            split_x = np.hstack([x_split_l, x_split_r]).reshape(1,2)
+            split_y = y[offset:offset + m:m]
+            print(np.shape(split_x))
+            print(np.shape(split_y))
+            print(split_x, split_y)
             for k in range(offset, offset + m):
-                dj = get_dJ(x, y, theta)
+                split_x.transpose()
+                split_y.transpose()
+                dj = get_dJ(split_x, split_y, theta)
                 theta = gradient_descent_step(dj, theta, alpha)
-                h = np.dot(theta, x.transpose())
-                j = 0.5 / len(x) * np.square(h - y.transpose()).sum(axis=1)
+                h = np.dot(theta, split_x.transpose())
+                j = 0.5 / len(split_x) * np.square(h - split_y.transpose()).sum(axis=1)
                 alpha -= 0.0002
                 plt.title("Minimization J")
                 plt.xlabel("i")
                 plt.ylabel("J")
                 plt.plot(i, j, "b.")
             offset += m
-        generate_linear(1, -3, 1, 'linear_for_minibatch.csv', 1000)
-
+        generate_linear(1, -3, 1, 'linear_for_minibatch.csv', 800)
+        with open('linear_for_minibatch.csv', 'r') as f:
+            data = np.loadtxt(f, delimiter=',')
+        x, y = np.hsplit(data, 2)
+        x = np.hstack([np.ones((800, 1)), x])
     plt.show()
     return theta
 
@@ -194,29 +206,14 @@ def get_dJ_sgd(x, y, theta, alpha):
     return new_theta
 
 
-def divide_x(x):
-    random.shuffle(x)
-    size_educational = 0.6 * len(x)
-    size_test = 0.2 * len(x)  # also size of validate sample = size of test sample
-    x_edu = list()
-    x_t = list()
-    x_v = list()
-    for i in range(int(size_educational)):
-        x_edu.append(x[i][0])
-    for i in range(int(size_educational), int(size_educational) + int(size_test)):
-        x_t.append(x[i][0])
-    for i in range(int(size_educational) + int(size_test), int(len(x))):
-        x_v.append(x[i][0])
-    x_educational = np.array(x_edu).reshape(size_educational, 1)
-    x_test = np.array(x_t).reshape(size_test, 1)
-    x_validate = np.array(x_v).reshape(size_test, 1)
-    return x_educational, x_validate, x_test
+def divide_minibatch(x, size):
+    return x
 
 
 # try each of gradient decsent (complete, minibatch, sgd) for varius alphas
 # L - number of iterations
 # plot results as J(i)
-def minimize(theta,x, y, L):
+def minimize(theta, x, y, L):
     alpha = 0.1
     for i in range(L):
         dj = get_dJ(x, y, theta)  # here you should try different gradient descents
@@ -255,6 +252,14 @@ if __name__ == "__main__":
     x = np.hstack([np.ones((100, 1)), x])
 
     theta_grad = minimize(theta, x, y, 100)
+    check(theta_grad[0], np.array([-3, 1]))
+
+    generate_linear(1, -3, 1, 'linear_for_minibatch.csv', 800)
+    with open('linear_for_minibatch.csv', 'r') as f:
+        data = np.loadtxt(f, delimiter=',')
+    x, y = np.hsplit(data, 2)
+    x = np.hstack([np.ones((800, 1)), x])
+    theta_grad = minimize_minibatch(x, y, theta, 100, 50)
     check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
 
