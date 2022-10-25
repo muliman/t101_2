@@ -155,21 +155,19 @@ def get_dJ(x, y, theta):
 
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
 def minimize_minibatch(x, y, theta, l, m):
-    alpha = 0.15
+    alpha = 0.001
     for i in range(l):
-        x_split = np.hsplit(x, m)
-        y_split = np.hsplit(y, m)
-        np.reshape(y, (40, 1))
-        np.reshape(x_split, (40, 1))
-        x_split = np.hstack([np.ones((40, 1)), x_split])
-        for split_x, split_y in x_split, y_split:
+        x = np.hstack([np.ones((800, 1)), x])
+        x = np.vsplit(x, np.shape(x)[0] / m)
+        y = np.vsplit(y, np.shape(y)[0] / m)
+        for split_x, split_y in list(zip(x, y)):
             split_x.transpose()
             split_y.transpose()
             dj = get_dJ(split_x, split_y, theta)
             theta = gradient_descent_step(dj, theta, alpha)
             h = np.dot(theta, split_x.transpose())
             j = 0.5 / len(split_x) * np.square(h - split_y.transpose()).sum(axis=1)
-            alpha -= 0.0002
+            alpha += 0.00002
             plt.title("Minimization J for minibatch")
             plt.xlabel("i")
             plt.ylabel("J")
@@ -252,7 +250,7 @@ if __name__ == "__main__":
     with open('linear_for_minibatch.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
-    theta_grad = minimize_minibatch(x, y, theta, 100, 20)
+    theta_grad = minimize_minibatch(x, y, theta, 100, 40)
     check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
 
