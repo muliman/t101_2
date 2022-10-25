@@ -13,7 +13,7 @@ import random
 # with random noise of given amplitude (noise)
 # visualizes it and unloads to csv
 def generate_linear(a, b, noise, filename, size=100):
-    #print('Generating random data y = a*x + b')
+    # print('Generating random data y = a*x + b')
     x = 2 * np.random.rand(size, 1) - 1
     y = a * x + b + noise * a * (np.random.rand(size, 1) - 0.5)
     data = np.hstack((x, y))
@@ -181,21 +181,24 @@ def minimize_minibatch(x, y, theta, l, m):
 
 
 # get gradient over all minibatch of single sample from xy dataset - stochastic gradient descent
-def get_dJ_sgd(x, y, theta, alpha):
-    temp_x = x
-    temp_y = y
-    new_theta = np.ndarray
-    new_theta.reshape(np.shape(theta))
-    theta_trans = theta.transpose()
-    h = np.dot(theta_trans, x)  # calculate hypothesis
-    dj = [0] * len(theta)
-    for i in range(len(theta)):  # calculate partial derivatives of J
-        for k in range(len(x)):
-            dj[i] += 1 / len(x) * (h[np.power(x, i)] - np.power(y, i)) * np.power(x[k], i)
-    for i in range(len(x)):
-        index = random.randint(0, len(x))
-        new_theta.itemset(i, gradient_descent_step(dj[index], theta[index], alpha))
-    return new_theta
+def minimize_sgd(x, y, theta, l):
+    alpha = 0.01
+    for i in range(l):
+        index = random.randint(0, len(x)-1)
+        sgd_x = np.reshape(x[index], (1, 1))
+        sgd_x = np.hstack([np.ones((1, 1)), sgd_x]).reshape(1, 2)
+        sgd_y = np.reshape(y[index], (1, 1))
+        dj = get_dJ(sgd_x, sgd_y, theta)
+        theta = gradient_descent_step(dj, theta, alpha)
+        h = np.dot(theta, sgd_x.transpose())
+        j = 0.5 / len(x) * np.square(h - sgd_y.transpose()).sum(axis=1)
+        alpha += 0.0002
+        plt.title("Minimization J for minibatch")
+        plt.xlabel("i")
+        plt.ylabel("J")
+        plt.plot(i, j, "b.")
+    plt.show()
+    return theta
 
 
 def divide_minibatch(x, size):
@@ -251,6 +254,9 @@ if __name__ == "__main__":
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
     theta_grad = minimize_minibatch(x, y, theta, 80, 80)
+    check(theta_grad[0], np.array([-3, 1]))
+
+    theta_grad = minimize_sgd(x, y, theta, 80)
     check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
 
