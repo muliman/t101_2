@@ -182,7 +182,7 @@ def minimize_minibatch(x, y, theta, l, m):
 
 # get gradient over all minibatch of single sample from xy dataset - stochastic gradient descent
 def minimize_sgd(x, y, theta, l):
-    alpha = 0.01
+    alpha = 0.08
     for i in range(l):
         index = random.randint(0, len(x)-1)
         sgd_x = np.reshape(x[index], (1, 1))
@@ -192,8 +192,8 @@ def minimize_sgd(x, y, theta, l):
         theta = gradient_descent_step(dj, theta, alpha)
         h = np.dot(theta, sgd_x.transpose())
         j = 0.5 / len(x) * np.square(h - sgd_y.transpose()).sum(axis=1)
-        alpha += 0.0002
-        plt.title("Minimization J for minibatch")
+        alpha += 0.002
+        plt.title("Minimization J for sgd")
         plt.xlabel("i")
         plt.ylabel("J")
         plt.plot(i, j, "b.")
