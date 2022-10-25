@@ -167,11 +167,11 @@ def minimize_minibatch(x, y, theta, l, m):
             theta = gradient_descent_step(dj, theta, alpha)
             h = np.dot(theta, split_x.transpose())
             j = 0.5 / len(split_x) * np.square(h - split_y.transpose()).sum(axis=1)
-            alpha += 0.00002
+            alpha += 0.0002
             plt.title("Minimization J for minibatch")
             plt.xlabel("i")
             plt.ylabel("J")
-            plt.plot(i, j, "b.")
+        plt.plot(i, j, "b.")
         generate_linear(1, -3, 1, 'linear_for_minibatch.csv', 800)
         with open('linear_for_minibatch.csv', 'r') as f:
             data = np.loadtxt(f, delimiter=',')
@@ -250,7 +250,7 @@ if __name__ == "__main__":
     with open('linear_for_minibatch.csv', 'r') as f:
         data = np.loadtxt(f, delimiter=',')
     x, y = np.hsplit(data, 2)
-    theta_grad = minimize_minibatch(x, y, theta, 100, 40)
+    theta_grad = minimize_minibatch(x, y, theta, 80, 80)
     check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
 
