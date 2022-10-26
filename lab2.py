@@ -198,17 +198,17 @@ def minimize_minibatch(x, y, theta, l, m):
 
 # get gradient over all minibatch of single sample from xy dataset - stochastic gradient descent
 def minimize_sgd(x, y, theta, l):
-    alpha = 0.3
+    alpha = 0.1
     for i in range(l):
-        index = random.randint(0, len(x)-1)
-        sgd_x = np.reshape(x[index], (1, 1))
+        #index = random.randint(0, len(x)-1)
+        sgd_x = np.reshape(x, (1, 1))
         sgd_x = np.hstack([np.ones((1, 1)), sgd_x]).reshape(1, 2)
-        sgd_y = np.reshape(y[index], (1, 1))
+        sgd_y = np.reshape(y, (1, 1))
         dj = get_dJ(sgd_x, sgd_y, theta)
         theta = gradient_descent_step(dj, theta, alpha)
         h = np.dot(theta, sgd_x.transpose())
         j = 0.5 / len(x) * np.square(h - sgd_y.transpose()).sum(axis=1)
-        alpha -= 0.0002
+        alpha += 0.005
         plt.title("Minimization J for sgd")
         plt.xlabel("i")
         plt.ylabel("J")
@@ -257,7 +257,11 @@ if __name__ == "__main__":
     theta_grad = minimize_minibatch(x, y, theta, 80, 80)
     check(theta_grad[0], np.array([-3, 1]))
 
-    theta_grad = minimize_sgd(x, y, theta, 80)
+    generate_linear(1, -3, 1, 'linear_for_sgd.csv', 1)
+    with open('linear_for_sgd.csv', 'r') as f:
+        data = np.loadtxt(f, delimiter=',')
+    x, y = np.hsplit(data, 2)
+    theta_grad = minimize_sgd(x, y, theta, 120)
     check(theta_grad[0], np.array([-3, 1]))
     # 3. call check(theta1, theta2) to check results for optimal theta
 
