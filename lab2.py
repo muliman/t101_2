@@ -153,6 +153,22 @@ def get_dJ(x, y, theta):
     return dj
 
 
+def minimize(theta, x, y, L):
+    alpha = 0.1
+    for i in range(L):
+        dj = get_dJ(x, y, theta)  # here you should try different gradient descents
+        theta = gradient_descent_step(dj, theta, alpha)
+        h = np.dot(theta, x.transpose())
+        j = 0.5 / len(x) * np.square(h - y.transpose()).sum(axis=1)
+        alpha -= 0.0002
+        plt.title("Minimization J")
+        plt.xlabel("i")
+        plt.ylabel("J")
+        plt.plot(i, j, "b.")
+    plt.show()
+    return theta
+
+
 # get gradient over all minibatch of size M of xy dataset - minibatch gradient descent
 def minimize_minibatch(x, y, theta, l, m):
     alpha = 0.001
@@ -182,7 +198,7 @@ def minimize_minibatch(x, y, theta, l, m):
 
 # get gradient over all minibatch of single sample from xy dataset - stochastic gradient descent
 def minimize_sgd(x, y, theta, l):
-    alpha = 0.08
+    alpha = 0.3
     for i in range(l):
         index = random.randint(0, len(x)-1)
         sgd_x = np.reshape(x[index], (1, 1))
@@ -192,36 +208,21 @@ def minimize_sgd(x, y, theta, l):
         theta = gradient_descent_step(dj, theta, alpha)
         h = np.dot(theta, sgd_x.transpose())
         j = 0.5 / len(x) * np.square(h - sgd_y.transpose()).sum(axis=1)
-        alpha += 0.002
+        alpha -= 0.0002
         plt.title("Minimization J for sgd")
         plt.xlabel("i")
         plt.ylabel("J")
         plt.plot(i, j, "b.")
+        generate_linear(1, -3, 1, 'linear_for_sgd.csv', 1)
+        with open('linear_for_sgd.csv', 'r') as f:
+            data = np.loadtxt(f, delimiter=',')
+        x, y = np.hsplit(data, 2)
     plt.show()
     return theta
 
 
 def divide_minibatch(x, size):
     return x
-
-
-# try each of gradient decsent (complete, minibatch, sgd) for varius alphas
-# L - number of iterations
-# plot results as J(i)
-def minimize(theta, x, y, L):
-    alpha = 0.1
-    for i in range(L):
-        dj = get_dJ(x, y, theta)  # here you should try different gradient descents
-        theta = gradient_descent_step(dj, theta, alpha)
-        h = np.dot(theta, x.transpose())
-        j = 0.5 / len(x) * np.square(h - y.transpose()).sum(axis=1)
-        alpha -= 0.0002
-        plt.title("Minimization J")
-        plt.xlabel("i")
-        plt.ylabel("J")
-        plt.plot(i, j, "b.")
-    plt.show()
-    return theta
 
 
 if __name__ == "__main__":
